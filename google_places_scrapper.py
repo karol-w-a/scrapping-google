@@ -104,12 +104,3 @@ class GooglePlacesScrapper:
                     exit(-1)
                 time.sleep(random.uniform(self.min_delay, self.max_delay))
             print(result)
-
-
-if __name__ == "__main__":
-    points_path = 'creating-grid/scrap_points_radius_limit_per_cell_35.csv'
-    points = read_points(points_path)
-    # random points order:
-    points = random.sample(points, 5000)
-    scrapper = GooglePlacesScrapper(API_KEY, points)
-    scrapper.scrap()
