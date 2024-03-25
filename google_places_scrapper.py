@@ -90,6 +90,23 @@ class GooglePlacesScrapper:
             return None
         return result.json()
 
+    def google_search_nearby_old(self, lat, lng, radius_meters, keyword, languageCode='pl', maxResultCount=20):
+        url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
+        params = {
+            'keyword': keyword,
+            'location': f"{lat},{lng}",
+            'radius': radius_meters,
+            'key': self.api_key
+        }
+
+        result = requests.get(url, params=params)
+
+        if result.status_code != 200:
+            print(result.text)
+            return None
+        return result.json()
+
+
     def scrap(self):
         for point in self.scrap_points:
             lat, lng, radius = point
@@ -97,6 +114,22 @@ class GooglePlacesScrapper:
             result = self.load_result_from_cache(lat, lng, radius)
             if result is None:
                 result = self.google_search_nearby(lat, lng, radius)
+                if result is not None:
+                    self.cache_result_to_file(lat, lng, radius, result)
+                else:
+                    print(f"Failed on request: {result.text}")
+                    exit(-1)
+                time.sleep(random.uniform(self.min_delay, self.max_delay))
+            print(result)
+
+
+    def scrap_old(self, keyword):
+        for point in self.scrap_points:
+            lat, lng, radius = point
+            print(f"Scraping: {lat}, {lng}, radius: {radius}")
+            result = self.load_result_from_cache(lat, lng, radius)
+            if result is None:
+                result = self.google_search_nearby_old(lat, lng, radius, keyword, "pl")
                 if result is not None:
                     self.cache_result_to_file(lat, lng, radius, result)
                 else:

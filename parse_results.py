@@ -10,7 +10,7 @@ FIELDNAMES = ['place_id', 'name', 'status',
               'lat', 'lng', 'powiat', 'wojewodztwo', 'country',
               'phone',
               'primary_type', 'types',
-              'google_place_url', 'google_location_url']
+              'google_place_url', 'google_location_url', 'street_view_url']
 
 today_date = datetime.date.today().strftime('%Y-%m-%d')
 file_out = f'google_maps_{today_date}.csv'
@@ -92,6 +92,7 @@ def parse_scrapped_points():
                             google_places.add(address['place_id'])
                             address['google_place_url'] = f'https://www.google.com/maps/place/?q=place_id:{address["place_id"]}'
                             address['google_location_url'] = f'https://www.google.com/maps/@{address["lat"]},{address["lng"]},21z'
+                            address['street_view_url'] = f'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint={address["lat"]},{address["lng"]}'
                             writer.writerow(address)
                             google_places_count += 1
     print(f'Parsed {result_files_count} files')
